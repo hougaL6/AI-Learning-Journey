@@ -1,0 +1,36 @@
+1. Python 核心语法铁律
+缩进即灵魂：遇到冒号 :（如 for, if, def），下一行必须缩进 4 个空格，代表从属关系。
+
+字典 (Dict)：person = {"姓名": "张三", "年龄": 20}（⚠️ 键值对之间必须加英文逗号）。
+
+2. NumPy（极速计算大脑）
+核心特性：强迫症，必须装同类型数据；支持矩阵极速批量运算。
+
+布尔筛选（极其常用）：
+import numpy as np
+scores = np.array([78, 92, 85, 60])
+good_scores = scores[scores >= 85] # 瞬间挑出及格的分数
+
+3. Pandas（超级 Excel 表格）
+核心特性：专门处理带有行列名称的结构化数据（CSV）。
+
+常用连招：
+import pandas as pd
+df = pd.read_csv("data.csv") # 读取
+df.to_csv("new.csv", index=False) # 保存
+avg = df["分数"].mean() # 算平均值
+best = df[df["分数"] == df["分数"].max()] # 找最高分
+df_sorted = df.sort_values(by="分数", ascending=False) # 降序排队
+
+4. Matplotlib（神笔马良）
+避坑指南：必须先 plt.savefig()（拍照保存），再 plt.show()（交卷展示），否则保存的是白纸！
+
+5. OpenCV（视觉预处理）
+电脑眼里的彩色图片是 高 × 宽 × 3（BGR通道） 的三维数字矩阵。
+
+预处理流水线：
+import cv2
+img = cv2.imread("test.jpg") # 读图
+resized = cv2.resize(img, (256, 256)) # 缩放：迎合 AI 的固定输入强迫症
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # 转灰度：给 AI 减负
+edges = cv2.Canny(gray, 100, 200) # 边缘检测：提取灵魂线稿
