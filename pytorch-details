@@ -1,0 +1,53 @@
+PyTorch 深度学习练功房
+1. 核心概念翻译
+Tensor (张量)：带了 GPU 显卡加速外挂、且能自动追踪数学运算轨迹的超级多维数组。
+
+Shape (维度套娃)：[[1.0], [2.0]]。外层括号代表“有几个样本(Batch)”，内层代表“每个样本有几个特征”。
+
+self (本厂专属)：Python 面向对象编程的核心。代表“当前被实例化的具体对象”。在 __init__ 里加 self. 等于把机器焊死在自己的工厂里。
+2. 神经网络搭建模板 (OOP 八股文)
+import torch.nn as nn
+
+class MyNet(nn.Module):
+    def __init__(self):
+        super(MyNet, self).__init__()
+        # 采购机器（定义网络层）
+        self.fc1 = nn.Linear(28*28, 128) # 线性层（质检员）
+        self.relu = nn.ReLU()            # 激活函数（转弯滤镜，打破线性规律）
+        self.fc2 = nn.Linear(128, 10)    # 最终输出 10 个选项
+        
+    def forward(self, x):
+        # 开启流水线
+        x = x.view(-1, 28*28) # 把图片压扁成长条 (-1代表让电脑自动计算批次数量)
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        return x
+3. 【终极奥义】标准训练闭环五连鞭 + 测试结界
+import torch
+import torch.optim as optim
+
+# 【准备教练与红笔】
+optimizer = optim.SGD(model.parameters(), lr=0.01) # 纠错教练（lr 是迈步的力度）
+criterion = nn.CrossEntropyLoss() # 批改红笔（算误差）
+
+# ================= 🏋️ 平时魔鬼训练 (Train) =================
+model.train() # 开启训练模式
+for images, labels in train_loader:
+    outputs = model(images)           # 1. 蒙答案 (前向传播)
+    loss = criterion(outputs, labels) # 2. 算离谱度 (计算 Loss)
+    
+    optimizer.zero_grad()             # 3. 擦去旧草稿 (清空旧梯度)
+    loss.backward()                   # 4. 寻找病根 (反向传播，算梯度)
+    optimizer.step()                  # 5. 动手改错 (更新模型参数)
+
+# ================= 📝 周末期末考试 (Eval) =================
+model.eval() # 开启考试模式 (冻结学习机制)
+with torch.no_grad(): # 没收草稿纸结界：绝对不允许算梯度，极大节省算力和内存！
+    for images, labels in test_loader:
+        outputs = model(images)
+        # 获取 10 个选项中最高分所在的“序号”(即预测的数字)
+        _, predicted = torch.max(outputs.data, 1) 
+        
+        # 将张量脱壳成纯数字并累加
+        correct += (predicted == labels).sum().item()
